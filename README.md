@@ -13,6 +13,8 @@ An AI-assisted soybean leaf disease detection prototype. Upload a leaf photograp
 
 ## Quick start
 
+Use Python **3.10–3.12** for the full AI stack; TensorFlow does not currently provide a package for this workspace's Python 3.14 interpreter. The Flask interface can still run in demo mode with a newer Python version.
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
