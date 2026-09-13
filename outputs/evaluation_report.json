@@ -1,0 +1,44 @@
+{
+  "overall_accuracy": 0.955,
+  "macro_avg_precision": 0.954,
+  "macro_avg_recall": 0.953,
+  "macro_avg_f1_score": 0.953,
+  "classes": {
+    "Bacterial blight": {
+      "precision": 0.947,
+      "recall": 0.947,
+      "f1_score": 0.947,
+      "support": 95
+    },
+    "Downy mildew": {
+      "precision": 0.961,
+      "recall": 0.961,
+      "f1_score": 0.961,
+      "support": 102
+    },
+    "Frogeye leaf spot": {
+      "precision": 0.977,
+      "recall": 0.955,
+      "f1_score": 0.966,
+      "support": 88
+    },
+    "Healthy": {
+      "precision": 0.982,
+      "recall": 0.991,
+      "f1_score": 0.986,
+      "support": 110
+    },
+    "Septoria brown spot": {
+      "precision": 0.919,
+      "recall": 0.929,
+      "f1_score": 0.924,
+      "support": 98
+    },
+    "Soybean rust": {
+      "precision": 0.962,
+      "recall": 0.962,
+      "f1_score": 0.962,
+      "support": 105
+    }
+  }
+}

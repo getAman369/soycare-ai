@@ -1,29 +1,457 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SoyCare AI | Soybean Disease Detection</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  </head>
-  <body>
-    <header class="nav"><a class="brand" href="#home"><span>✦</span> SoyCare AI</a><nav><a href="#detect">Detect</a><a href="#insights">Insights</a><a href="#how-it-works">How it works</a></nav></header>
-    <main>
-      <section class="hero" id="home">
-        <div class="hero-copy"><p class="eyebrow">SMART SOYBEAN HEALTH</p><h1>Catch disease early.<br><em>Protect every harvest.</em></h1><p class="intro">Upload a clear leaf photo for an AI-assisted disease assessment, practical field actions, and visibility into crop-health trends.</p><a class="button" href="#detect">Check a leaf <span>→</span></a></div>
-        <div class="hero-card"><div class="leaf-art">🌿</div><p>IMAGE-LED INSPECTION</p><strong>Know what your crop needs next.</strong><div class="card-line"><span></span><small>Early action reduces spread</small></div></div>
-      </section>
-      <section class="detector" id="detect"><div class="section-heading"><p class="eyebrow">LEAF SCAN</p><h2>Get a clear next step.</h2><p>Use a well-lit, close-up photo of one soybean leaf. Avoid blurry images and heavy shadows.</p></div>
-        <div class="scan-grid"><label class="dropzone" id="dropzone"><input id="imageInput" type="file" accept="image/*"><span class="upload-icon">↑</span><strong>Drop your leaf photo here</strong><small>or click to browse · JPG, PNG, WEBP · max 8 MB</small><img id="preview" alt="Selected soybean leaf preview"></label>
-          <div class="scan-help"><h3>For the best result</h3><ol><li>Photograph the leaf in daylight.</li><li>Keep the leaf centered and in focus.</li><li>Include visible spots, edges, and discoloration.</li></ol><button class="button disabled" id="scanButton" disabled>Analyse image <span>→</span></button></div></div>
-        <div class="result hidden" id="result"></div>
-      </section>
-      <section class="insights" id="insights"><div><p class="eyebrow">FIELD INSIGHTS</p><h2>Turn detections into action.</h2><p>Each assessment is stored locally to help identify recurring issues and support timely crop decisions.</p></div><div class="metrics"><article><strong id="totalDetections">0</strong><span>Leaf scans</span></article><article><strong id="averageConfidence">—</strong><span>Average confidence</span></article><article><strong id="topDisease">—</strong><span>Most detected</span></article></div></section>
-      <section class="how" id="how-it-works"><p class="eyebrow">SIMPLE BY DESIGN</p><h2>From photo to field action in three steps.</h2><div class="steps"><article><span>01</span><h3>Capture</h3><p>Take a detailed image of the affected leaf.</p></article><article><span>02</span><h3>Analyse</h3><p>The model evaluates visual disease patterns.</p></article><article><span>03</span><h3>Act</h3><p>Review confidence-aware management advice.</p></article></div></section>
-    </main><footer><span>© 2026 SoyCare AI</span><span>Built for better soybean decisions.</span></footer>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SoyCare AI · Soybean Leaf Disease Diagnosis & Explainability</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="brand-logo" href="#">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">SoyCare AI</span>
+          <span class="brand-tag">v2.1 · Grad-CAM</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#diagnose">Diagnosis</a>
+        <a href="#explainability">Grad-CAM</a>
+        <a href="#analytics">Field Insights</a>
+        <a href="#history">Scan History</a>
+        <a href="#knowledge-base">Disease Library</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#diagnose" class="btn btn-primary btn-sm">
+          <span>New Leaf Scan</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Deep Learning · EfficientNetB0 & Grad-CAM Visual Interpretability</span>
+        </div>
+        <h1>AI-Assisted Soybean Leaf Disease Diagnosis</h1>
+        <p class="hero-lead">
+          High-resolution foliar pathology detection with convolutional class activation mapping (Grad-CAM), multi-class probability ranking, and tailored agronomic intervention guidelines.
+        </p>
+        <div class="hero-buttons">
+          <a href="#diagnose" class="btn btn-primary btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Start Leaf Scan</span>
+          </a>
+          <a href="#history" class="btn btn-secondary btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            <span>View Scan Logs</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-stats-card">
+        <div class="card-header">
+          <span class="card-label">MODEL SPECIFICATIONS</span>
+          <span class="status-indicator live">Ready</span>
+        </div>
+        <div class="spec-grid">
+          <div class="spec-item">
+            <span class="spec-label">Backbone</span>
+            <strong class="spec-val">EfficientNetB0</strong>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Input Size</span>
+            <strong class="spec-val">224 × 224 px</strong>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Pathogen Classes</span>
+            <strong class="spec-val">6 Categories</strong>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Explainability</span>
+            <strong class="spec-val">Grad-CAM Maps</strong>
+          </div>
+        </div>
+        <div class="card-footer-note">
+          <span>Target Crop: <em>Glycine max</em> (Soybean)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagnosis Tool Section -->
+    <section class="section-container" id="diagnose">
+      <div class="section-header">
+        <span class="section-eyebrow">DIAGNOSTIC WORKFLOW</span>
+        <h2>Upload or Capture Leaf Specimen</h2>
+        <p>Ensure the leaf surface is well-lit and lesions or discolorations are clearly in focus.</p>
+      </div>
+
+      <div class="diagnostic-grid">
+        <!-- Input Panel -->
+        <div class="input-card">
+          <!-- Input Tabs -->
+          <div class="input-mode-tabs">
+            <button class="tab-btn active" id="tabUpload">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <span>Upload Image File</span>
+            </button>
+            <button class="tab-btn" id="tabCamera">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span>Use Live Camera</span>
+            </button>
+          </div>
+
+          <!-- File Dropzone Container -->
+          <div class="dropzone-container" id="uploadContainer">
+            <label class="dropzone" id="dropzone" for="imageFileInput">
+              <input type="file" id="imageFileInput" accept="image/*" class="file-input-hidden">
+              <div class="dropzone-content" id="dropzonePrompt">
+                <div class="upload-icon-box">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                </div>
+                <strong>Drag & drop soybean leaf photograph</strong>
+                <span>or click to browse from device · JPG, PNG, WEBP up to 16 MB</span>
+              </div>
+              <div class="preview-wrapper hidden" id="previewWrapper">
+                <img id="imagePreview" alt="Selected leaf preview" class="preview-img">
+                <button type="button" class="btn-clear-img" id="btnClearImage" title="Remove image">&times;</button>
+              </div>
+            </label>
+          </div>
+
+          <!-- Camera Stream Container -->
+          <div class="camera-container hidden" id="cameraContainer">
+            <div class="video-wrapper">
+              <video id="webcamVideo" autoplay playsinline muted></video>
+              <canvas id="cameraCanvas" class="hidden"></canvas>
+            </div>
+            <div class="camera-controls">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnToggleCamera">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Switch Camera</span>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" id="btnSnapPhoto">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Capture Frame</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="input-actions">
+            <button class="btn btn-primary btn-block" id="btnDiagnose" disabled>
+              <span class="btn-text">Run Disease Diagnosis</span>
+              <span class="btn-spinner hidden"></span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scanning Guidance Sidebar -->
+        <div class="guidance-card">
+          <h3>Field Sampling Protocol</h3>
+          <ul class="protocol-list">
+            <li>
+              <div class="step-num">1</div>
+              <div>
+                <strong>Natural Daylight</strong>
+                <p>Capture foliage under diffuse ambient daylight. Avoid harsh shadows and camera flash glare.</p>
+              </div>
+            </li>
+            <li>
+              <div class="step-num">2</div>
+              <div>
+                <strong>Centered Trifoliate</strong>
+                <p>Frame a single diseased leaf in the center, filling at least 60% of the image area.</p>
+              </div>
+            </li>
+            <li>
+              <div class="step-num">3</div>
+              <div>
+                <strong>Include Margins & Lesions</strong>
+                <p>Ensure distinct lesion centers, halos, and leaf edges remain sharply in focus.</p>
+              </div>
+            </li>
+          </ul>
+
+          <div class="classes-badge-box">
+            <span class="badge-title">Detectable Pathologies</span>
+            <div class="classes-tags">
+              <span class="tag">Bacterial blight</span>
+              <span class="tag">Downy mildew</span>
+              <span class="tag">Frogeye leaf spot</span>
+              <span class="tag">Septoria brown spot</span>
+              <span class="tag">Soybean rust</span>
+              <span class="tag tag-healthy">Healthy foliage</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results View -->
+      <div class="results-container hidden" id="resultsSection">
+        <div class="results-card">
+          <!-- Result Header -->
+          <div class="result-header-banner" id="resultBanner">
+            <div class="result-title-group">
+              <div class="risk-badge" id="riskBadge">ASSESSMENT</div>
+              <h3 id="resultDiseaseName">Soybean Rust</h3>
+              <p class="pathogen-subtext" id="resultPathogen">Phakopsora pachyrhizi</p>
+            </div>
+            <div class="confidence-gauge">
+              <div class="gauge-value" id="resultConfidence">94.2%</div>
+              <div class="gauge-label">Confidence Score</div>
+            </div>
+          </div>
+
+          <!-- Result Main Grid -->
+          <div class="result-grid">
+            <!-- Visual Inspection & Grad-CAM -->
+            <div class="visual-inspection-box" id="explainability">
+              <div class="box-header">
+                <h4>Visual Pathology & Grad-CAM Heatmap</h4>
+                <div class="view-toggles">
+                  <button class="btn-toggle active" data-view="split">Side-by-Side</button>
+                  <button class="btn-toggle" data-view="heatmap">Heatmap Only</button>
+                  <button class="btn-toggle" data-view="original">Original Only</button>
+                </div>
+              </div>
+
+              <div class="visual-comparison-container" id="visualContainer">
+                <div class="img-frame original-frame">
+                  <span class="frame-label">Raw Specimen</span>
+                  <img id="resImgOriginal" alt="Original Specimen">
+                </div>
+                <div class="img-frame heatmap-frame">
+                  <span class="frame-label">Grad-CAM Convolutional Attention</span>
+                  <img id="resImgHeatmap" alt="Grad-CAM Activation Map">
+                </div>
+              </div>
+              <p class="gradcam-caption">
+                <small><strong>Explainability Note:</strong> Warmer red and yellow regions indicate spatial features that contributed highest activation weight to the EfficientNetB0 classification layer.</small>
+              </p>
+            </div>
+
+            <!-- Probability Breakdown -->
+            <div class="probabilities-box">
+              <h4>Class Probability Distribution</h4>
+              <div class="prob-bars-list" id="topProbabilitiesList">
+                <!-- Dynamically populated -->
+              </div>
+
+              <div class="diagnostic-note-box" id="diagnosticNoteBox">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span id="diagnosticNoteText">AI-assisted result. Always verify chemical interventions with an agronomic extension specialist.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agronomic Intervention Tabs -->
+          <div class="recommendations-section">
+            <div class="rec-tabs">
+              <button class="rec-tab-btn active" data-target="#tabImmediate">Immediate Field Actions</button>
+              <button class="rec-tab-btn" data-target="#tabChemical">Fungicide & Chemical Control</button>
+              <button class="rec-tab-btn" data-target="#tabCultural">Long-term Cultural Management</button>
+            </div>
+
+            <div class="rec-content">
+              <div class="rec-panel active" id="tabImmediate">
+                <div class="rec-icon-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <strong>Immediate Mitigation Steps</strong>
+                </div>
+                <ul id="listImmediateActions" class="rec-list"></ul>
+              </div>
+
+              <div class="rec-panel" id="tabChemical">
+                <div class="rec-icon-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 9.3V1.99M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>
+                  <strong>Targeted Chemical & Bio-Control Guidelines</strong>
+                </div>
+                <ul id="listChemicalControl" class="rec-list"></ul>
+              </div>
+
+              <div class="rec-panel" id="tabCultural">
+                <div class="rec-icon-header">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <strong>Prevention & Agronomic Sanitation</strong>
+                </div>
+                <ul id="listCulturalManagement" class="rec-list"></ul>
+              </div>
+            </div>
+
+            <div class="result-actions-bar">
+              <button class="btn btn-secondary btn-sm" id="btnPrintReport">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Print Diagnosis Sheet</span>
+              </button>
+              <a href="#history" class="btn btn-primary btn-sm" id="btnViewInHistory">
+                <span>View in Scan Log</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Field Analytics & Metrics -->
+    <section class="section-container bg-alt" id="analytics">
+      <div class="section-header">
+        <span class="section-eyebrow">FIELD MONITORING</span>
+        <h2>Aggregated Diagnostic Analytics</h2>
+        <p>Real-time telemetry and disease occurrence distributions logged locally.</p>
+      </div>
+
+      <div class="metrics-dashboard">
+        <div class="metric-card">
+          <span class="metric-title">Total Leaf Scans</span>
+          <strong class="metric-num" id="statTotalScans">0</strong>
+          <span class="metric-sub">Cumulative specimens processed</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Average Confidence</span>
+          <strong class="metric-num" id="statAvgConfidence">—</strong>
+          <span class="metric-sub">Mean diagnostic certainty</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">High-Risk Alerts</span>
+          <strong class="metric-num text-danger" id="statHighRisk">0</strong>
+          <span class="metric-sub">Requiring prompt field action</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Prevalent Pathology</span>
+          <strong class="metric-num text-accent" id="statTopDisease">—</strong>
+          <span class="metric-sub">Most frequent detection</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historical Logs Table -->
+    <section class="section-container" id="history">
+      <div class="history-header">
+        <div>
+          <span class="section-eyebrow">PERSISTENT TELEMETRY</span>
+          <h2>Field Scan History Log</h2>
+        </div>
+        <div class="history-actions">
+          <a href="/api/history/export" class="btn btn-secondary btn-sm" id="btnExportCsv">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <span>Export CSV Report</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="filter-toolbar">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="filterSearch" placeholder="Search by disease or notes...">
+        </div>
+        <div class="filter-selects">
+          <select id="filterDisease">
+            <option value="">All Pathologies</option>
+            <option value="Bacterial blight">Bacterial blight</option>
+            <option value="Downy mildew">Downy mildew</option>
+            <option value="Frogeye leaf spot">Frogeye leaf spot</option>
+            <option value="Healthy">Healthy</option>
+            <option value="Septoria brown spot">Septoria brown spot</option>
+            <option value="Soybean rust">Soybean rust</option>
+          </select>
+
+          <select id="filterRisk">
+            <option value="">All Risk Levels</option>
+            <option value="High Risk">High Risk</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Healthy">Healthy</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-container">
+        <table class="data-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Timestamp (UTC)</th>
+              <th>Thumbnail</th>
+              <th>Diagnosed Disease</th>
+              <th>Confidence</th>
+              <th>Risk Level</th>
+              <th>Source</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="8" class="text-center py-4">Loading scan history...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <span class="pagination-info" id="paginationInfo">Showing 0 of 0 records</span>
+        <div class="pagination-buttons">
+          <button class="btn btn-secondary btn-sm" id="btnPrevPage" disabled>Previous</button>
+          <button class="btn btn-secondary btn-sm" id="btnNextPage" disabled>Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disease Library / Agronomic Knowledge Base -->
+    <section class="section-container bg-alt" id="knowledge-base">
+      <div class="section-header">
+        <span class="section-eyebrow">PATHOLOGY DIRECTORY</span>
+        <h2>Soybean Disease Reference Library</h2>
+        <p>Comprehensive biological profiles, symptoms, and disease cycles for all detectable classes.</p>
+      </div>
+
+      <div class="disease-cards-grid" id="diseaseKbGrid">
+        <!-- Dynamically rendered disease cards -->
+      </div>
+    </section>
+  </main>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>SoyCare AI System</strong>
+        <p>AI-assisted soybean pathology diagnosis and management decision support.</p>
+      </div>
+      <div class="footer-meta">
+        <span>Author: <strong>Aman Yadav</strong></span>
+        <span>Backbone: EfficientNetB0 · Grad-CAM Interpretability</span>
+        <span class="disclaimer-text">Notice: For field decisions, cross-reference AI recommendations with local agricultural extension protocols.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
 </html>

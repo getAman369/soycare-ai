@@ -1,9 +1,141 @@
 {
-  "Healthy": {"symptoms": "No prominent disease pattern was identified.", "immediate_action": ["Continue weekly field scouting.", "Maintain balanced nutrition and good drainage."], "management": ["Use clean seed and crop rotation."], "loss_minimization": ["Keep a photographic record for comparison."]},
-  "Soybean rust": {"symptoms": "Small tan to reddish-brown lesions may develop, often beginning in lower leaves.", "immediate_action": ["Inspect surrounding plants and lower canopy leaves.", "Record affected rows and monitor spread within 3–5 days.", "Seek locally approved fungicide guidance from an agricultural officer."], "management": ["Use resistant varieties where available.", "Avoid unnecessary overhead irrigation."], "loss_minimization": ["Act early and prioritise affected zones for scouting."]},
-  "Frogeye leaf spot": {"symptoms": "Circular lesions with pale centres and darker reddish-brown margins can appear on leaves.", "immediate_action": ["Inspect nearby plants for similar lesions.", "Remove heavily affected plant residue after harvest.", "Consult local crop guidance for approved controls."], "management": ["Rotate crops and choose tolerant varieties."], "loss_minimization": ["Document hotspots to plan next-season rotation."]},
-  "Bacterial blight": {"symptoms": "Irregular water-soaked or brown leaf spots, sometimes with yellow halos.", "immediate_action": ["Avoid handling wet plants to reduce spread.", "Improve drainage and avoid overhead irrigation when possible.", "Consult a local expert before applying any treatment."], "management": ["Use disease-free seed and field sanitation."], "loss_minimization": ["Separate monitoring of affected patches from healthy areas."]},
-  "Downy mildew": {"symptoms": "Yellow patches may appear on the upper surface with greyish growth below in humid conditions.", "immediate_action": ["Improve airflow where feasible.", "Check lower leaf surfaces in the morning.", "Seek location-specific agricultural guidance."], "management": ["Avoid prolonged leaf wetness."], "loss_minimization": ["Monitor after humid or rainy periods."]},
-  "Septoria brown spot": {"symptoms": "Small irregular brown spots commonly begin on lower leaves and may cause yellowing.", "immediate_action": ["Track whether symptoms are moving upward in the canopy.", "Reduce crop residue where practical after harvest.", "Consult local advice for any chemical decision."], "management": ["Use crop rotation and field sanitation."], "loss_minimization": ["Prioritise monitoring during wet weather."]},
-  "Unknown": {"symptoms": "The image could not be confidently matched to a disease class.", "immediate_action": ["Retake a close, well-lit photograph.", "Ask a local agricultural extension officer to inspect the crop."], "management": ["Do not apply treatment solely on this result."], "loss_minimization": ["Monitor affected plants and record changes."]}
+  "Healthy": {
+    "pathogen": "None (Plant foliage is physiologically intact and disease-free)",
+    "conditions": "Balanced soil moisture (60–70% field capacity), optimal ambient temperatures (20–30°C), and adequate airflow.",
+    "symptoms": "Uniform green leaf blade without necrotic spots, fungal mycelium, chlorotic halos, or curling.",
+    "immediate_action": [
+      "Maintain regular weekly field scouting throughout vegetative and reproductive stages.",
+      "Ensure balanced NPK soil fertilization and avoid excessive vegetative nitrogen.",
+      "Monitor canopy humidity and record baseline health photographs."
+    ],
+    "chemical_control": [
+      "No chemical application required.",
+      "Preventive bio-fungicide seed treatments can be planned for the subsequent planting cycle."
+    ],
+    "cultural_management": [
+      "Maintain certified disease-free seed selection.",
+      "Practice 2- to 3-year crop rotation with non-host crops such as maize or sorghum.",
+      "Ensure clean field drainage to prevent localized waterlogging."
+    ],
+    "loss_minimization": "Document health baseline to benchmark subsequent growth phases."
+  },
+  "Soybean rust": {
+    "pathogen": "Phakopsora pachyrhizi (Fungal Basidiomycete)",
+    "conditions": "High relative humidity (>90%) with prolonged leaf wetness (6–10 hours) and temperatures between 18°C and 28°C.",
+    "symptoms": "Tiny, raised tan to reddish-brown pustules (uredinia) primarily on the underside of lower canopy leaves, progressing to rapid premature defoliation.",
+    "immediate_action": [
+      "Immediately flag infected field sectors and calculate infected leaf percentage.",
+      "Scout surrounding rows and lower canopy layers within a 50-meter radius.",
+      "Halt all overhead sprinkler irrigation to minimize canopy moisture duration."
+    ],
+    "chemical_control": [
+      "Triazole fungicides (e.g., Tebuconazole, Flutriafol, or Difenoconazole) at early symptom onset.",
+      "Strobilurin + Triazole premixes (e.g., Azoxystrobin + Difenoconazole or Pyraclostrobin + Fluxapyroxad).",
+      "Rotate FRAC groups (FRAC 3 and FRAC 11) to prevent fungicide resistance."
+    ],
+    "cultural_management": [
+      "Plant early-maturing, rust-tolerant soybean cultivars.",
+      "Adopt wider row spacing (45–50 cm) to facilitate canopy aeration and reduce humidity.",
+      "Eradicate alternative legume weed hosts along field perimeters."
+    ],
+    "loss_minimization": "Apply targeted spray within 48–72 hours of initial detection to prevent yield losses of up to 60–80%."
+  },
+  "Frogeye leaf spot": {
+    "pathogen": "Cercospora sojina (Fungal Ascomycete)",
+    "conditions": "Warm (25–30°C) and humid conditions with frequent rainfall or heavy morning dew.",
+    "symptoms": "Small, circular to angular spots with light gray/tan centers bordered by narrow, dark reddish-brown margins on upper leaf surfaces.",
+    "immediate_action": [
+      "Examine upper and middle canopy leaves for characteristic circular lesions.",
+      "Assess disease incidence before R3 (pod initiation) growth stage.",
+      "Collect and isolate representative symptomatic foliage for laboratory verification."
+    ],
+    "chemical_control": [
+      "Succinate dehydrogenase inhibitors (SDHI, FRAC 7) combined with DMI triazoles.",
+      "Avoid single-site QoI (Strobilurin) applications due to widespread Cercospora sojina QoI resistance."
+    ],
+    "cultural_management": [
+      "Deep tillage of infected soybean residue post-harvest to accelerate decomposition.",
+      "Rotate with non-host crops like corn or cotton for at least 2 seasons.",
+      "Plant resistant soybean varieties with Rcs genes (Rcs1, Rcs2, Rcs3)."
+    ],
+    "loss_minimization": "Target fungicide applications between R3 (beginning pod) and R5 (beginning seed) if lesions are active."
+  },
+  "Bacterial blight": {
+    "pathogen": "Pseudomonas savastanoi pv. glycinea (Bacterium)",
+    "conditions": "Cool (20–25°C), wet weather with stormy winds or hail that create micro-wounds in leaf tissue.",
+    "symptoms": "Small, angular water-soaked spots that turn dark brown to black, typically surrounded by distinctive chlorotic (yellow) halos. Lesion centers may drop out.",
+    "immediate_action": [
+      "Strictly prohibit machinery and personnel entry into wet fields to prevent bacterial dispersal.",
+      "Avoid foliar nitrogen or mechanical cultivating that could inflict leaf wounds.",
+      "Monitor weather forecasts for prolonged cold, overcast spells."
+    ],
+    "chemical_control": [
+      "Copper-based bactericides (Copper hydroxide / Copper oxychloride) can provide preventive suppression.",
+      "Antibiotics are generally not recommended or approved for field-scale broad-acre use."
+    ],
+    "cultural_management": [
+      "Use certified disease-free, high-vigor seed lots.",
+      "Incorporate crop residues cleanly into the soil after harvest.",
+      "Avoid sprinkler irrigation during early vegetative leaf expansion."
+    ],
+    "loss_minimization": "Hot, dry weather (>30°C) naturally suppresses bacterial blight progression."
+  },
+  "Downy mildew": {
+    "pathogen": "Peronospora manshurica (Oomycete)",
+    "conditions": "Moderate temperatures (20–22°C) combined with high relative humidity (>85%) and heavy night dew.",
+    "symptoms": "Pale green to bright yellow spots on upper leaf surfaces, with corresponding fuzzy, grayish-purple downy fungal tufts on the lower leaf surface.",
+    "immediate_action": [
+      "Inspect lower leaf surfaces early in the morning before dew evaporates.",
+      "Check young trifoliates for systemic chlorotic mottling.",
+      "Improve air drainage by trimming border weeds and obstacles."
+    ],
+    "chemical_control": [
+      "Foliar fungicides containing Mancozeb, Chlorothalonil, or Mefenoxam in severe seed production crops.",
+      "Fungicide seed treatment with Metalaxyl/Mefenoxam to prevent seedling systemic infection."
+    ],
+    "cultural_management": [
+      "Plow under infected crop residue thoroughly after harvest.",
+      "Select resistant soybean cultivars with Rpm genes.",
+      "Adopt minimum 1-year rotation away from soybean."
+    ],
+    "loss_minimization": "Disease rarely causes major economic yield loss on commercial grain unless defoliation exceeds 25%."
+  },
+  "Septoria brown spot": {
+    "pathogen": "Septoria glycines (Fungal Ascomycete)",
+    "conditions": "Warm (25–28°C), wet weather with rain splash transporting fungal spores upward through the canopy.",
+    "symptoms": "Irregular, dark brown lesions on unifoliate and lower trifoliate leaves, coalescing into necrotic patches with surrounding chlorosis and premature leaf drop.",
+    "immediate_action": [
+      "Track whether lesions are restricted to lower canopy or ascending toward the middle third.",
+      "Sample lower leaves to confirm absence of rust pustules.",
+      "Evaluate canopy closure and ground residue cover."
+    ],
+    "chemical_control": [
+      "Triazoles (Prothioconazole, Tebuconazole) applied at R3 growth stage if disease ascends to middle canopy.",
+      "Broad-spectrum protective multi-site fungicides (Chlorothalonil) where permitted."
+    ],
+    "cultural_management": [
+      "Utilize no-till or reduced-till residue management combined with strict 2-year rotation.",
+      "Plant certified fungicide-treated seed.",
+      "Optimize planting density to promote rapid lower-canopy drying."
+    ],
+    "loss_minimization": "Treatment is only economically justified if disease advances past the lower third of the canopy before pod fill."
+  },
+  "Unknown": {
+    "pathogen": "Inconclusive / Unidentified foliage pattern",
+    "conditions": "Suboptimal image lighting, out-of-focus capture, or rare physiological disorder (e.g. nutrient deficiency, sunburn, herbicide drift).",
+    "symptoms": "Atypical foliar discoloration, mechanical tearing, or non-diagnostic spots.",
+    "immediate_action": [
+      "Retake a high-resolution, clear photograph in natural daylight without direct lens glare.",
+      "Ensure only a single leaf blade is centered in the frame.",
+      "Contact your local agricultural extension service or university plant diagnostic clinic."
+    ],
+    "chemical_control": [
+      "Do NOT apply broad-spectrum fungicides without confirmed visual or lab diagnosis."
+    ],
+    "cultural_management": [
+      "Inspect soil pH, moisture levels, and recent fertilizer/herbicide spray history.",
+      "Isolate suspected plants if viral transmission is suspected."
+    ],
+    "loss_minimization": "Log coordinates and observe symptoms over a 48-hour period."
+  }
 }
