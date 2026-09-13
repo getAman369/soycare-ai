@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SoyCare AI | Soybean Disease Detection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <header class="nav"><a class="brand" href="#home"><span>✦</span> SoyCare AI</a><nav><a href="#detect">Detect</a><a href="#insights">Insights</a><a href="#how-it-works">How it works</a></nav></header>
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-copy"><p class="eyebrow">SMART SOYBEAN HEALTH</p><h1>Catch disease early.<br><em>Protect every harvest.</em></h1><p class="intro">Upload a clear leaf photo for an AI-assisted disease assessment, practical field actions, and visibility into crop-health trends.</p><a class="button" href="#detect">Check a leaf <span>→</span></a></div>
+        <div class="hero-card"><div class="leaf-art">🌿</div><p>IMAGE-LED INSPECTION</p><strong>Know what your crop needs next.</strong><div class="card-line"><span></span><small>Early action reduces spread</small></div></div>
+      </section>
+      <section class="detector" id="detect"><div class="section-heading"><p class="eyebrow">LEAF SCAN</p><h2>Get a clear next step.</h2><p>Use a well-lit, close-up photo of one soybean leaf. Avoid blurry images and heavy shadows.</p></div>
+        <div class="scan-grid"><label class="dropzone" id="dropzone"><input id="imageInput" type="file" accept="image/*"><span class="upload-icon">↑</span><strong>Drop your leaf photo here</strong><small>or click to browse · JPG, PNG, WEBP · max 8 MB</small><img id="preview" alt="Selected soybean leaf preview"></label>
+          <div class="scan-help"><h3>For the best result</h3><ol><li>Photograph the leaf in daylight.</li><li>Keep the leaf centered and in focus.</li><li>Include visible spots, edges, and discoloration.</li></ol><button class="button disabled" id="scanButton" disabled>Analyse image <span>→</span></button></div></div>
+        <div class="result hidden" id="result"></div>
+      </section>
+      <section class="insights" id="insights"><div><p class="eyebrow">FIELD INSIGHTS</p><h2>Turn detections into action.</h2><p>Each assessment is stored locally to help identify recurring issues and support timely crop decisions.</p></div><div class="metrics"><article><strong id="totalDetections">0</strong><span>Leaf scans</span></article><article><strong id="averageConfidence">—</strong><span>Average confidence</span></article><article><strong id="topDisease">—</strong><span>Most detected</span></article></div></section>
+      <section class="how" id="how-it-works"><p class="eyebrow">SIMPLE BY DESIGN</p><h2>From photo to field action in three steps.</h2><div class="steps"><article><span>01</span><h3>Capture</h3><p>Take a detailed image of the affected leaf.</p></article><article><span>02</span><h3>Analyse</h3><p>The model evaluates visual disease patterns.</p></article><article><span>03</span><h3>Act</h3><p>Review confidence-aware management advice.</p></article></div></section>
+    </main><footer><span>© 2026 SoyCare AI</span><span>Built for better soybean decisions.</span></footer>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

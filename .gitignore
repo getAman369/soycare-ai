@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+venv/
+uploads/*
+!uploads/.gitkeep
+data/soycare.db
+models/*.keras
+models/*.h5
+data/raw/*
+!data/raw/.gitkeep

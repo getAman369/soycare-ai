@@ -1,0 +1,1 @@
+"""SoyCare AI application modules."""
