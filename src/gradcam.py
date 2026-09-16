@@ -6,6 +6,7 @@ that contributed most strongly to the model's classification.
 from pathlib import Path
 import numpy as np
 from PIL import Image
+import matplotlib
 import matplotlib.cm as cm
 import logging
 
@@ -105,7 +106,10 @@ def save_and_overlay_gradcam(image_path, heatmap, output_path, alpha=0.45, color
     heatmap_uint8 = np.uint8(255 * heatmap)
 
     # Use colormap to colorize the heatmap
-    cmap = cm.get_cmap(colormap)
+    try:
+        cmap = matplotlib.colormaps[colormap]
+    except Exception:
+        cmap = cm.get_cmap(colormap)
     cmap_colors = cmap(np.arange(256))[:, :3]
     colored_heatmap = cmap_colors[heatmap_uint8]
     colored_heatmap = Image.fromarray(np.uint8(colored_heatmap * 255))

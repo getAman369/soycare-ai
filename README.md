@@ -67,10 +67,18 @@ soyabean/
 │   └── 01_model_training_and_evaluation.ipynb # End-to-end Jupyter training pipeline
 ├── src/
 │   ├── __init__.py
-│   ├── predict.py             # Inference pipeline & confidence ranking
+│   ├── predict.py             # Inference pipeline with leaf validation & EXIF transpose
 │   ├── gradcam.py             # Grad-CAM heatmap generation module
+│   ├── export_tflite.py       # TFLite conversion & FP16/INT8 quantization
 │   ├── train.py               # Two-stage EfficientNetB0 training script
 │   └── evaluate.py            # Confusion matrix & benchmark evaluation
+├── tests/                     # Automated Pytest unit & integration test suite
+│   ├── conftest.py            # Test fixtures & test DB setup
+│   ├── test_api.py            # Flask endpoint & SQLite tests
+│   ├── test_predict.py        # ML inference & leaf validation tests
+│   └── test_gradcam.py        # Heatmap overlay tests
+├── Dockerfile                 # Multi-stage production container
+├── docker-compose.yml         # Container orchestration configuration
 ├── knowledge_base/
 │   └── disease_recommendations.json # Agronomic intervention profiles
 ├── outputs/                   # Generated evaluation plots and reports
@@ -110,17 +118,23 @@ python app.py
 ```
 Open your browser at **`http://127.0.0.1:5000`**.
 
-### 3. Model Training (Optional)
-To train the neural network on your custom dataset splits:
-1. Place dataset images into `data/processed/train/<class>`, `data/processed/validation/<class>`, and `data/processed/test/<class>`.
-2. Run the training script:
-   ```bash
-   python -m src.train
-   ```
-3. Evaluate model weights:
-   ```bash
-   python -m src.evaluate
-   ```
+### 3. Automated Testing
+Run the complete automated test suite with pytest:
+```bash
+pytest tests/ -v
+```
+
+### 4. Edge & Mobile Deployment (TFLite Export)
+Convert trained Keras model into optimized `.tflite` binaries with FP16 or INT8 dynamic quantization:
+```bash
+python -m src.export_tflite --quantize float16
+```
+
+### 5. Docker Deployment
+Launch with Docker and Docker Compose:
+```bash
+docker compose up --build
+```
 
 ---
 

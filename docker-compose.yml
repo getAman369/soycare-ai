@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  soycare-web:
+    build: .
+    container_name: soycare_ai_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+      - ./models:/app/models
+      - ./outputs:/app/outputs

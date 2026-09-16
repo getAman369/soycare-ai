@@ -205,6 +205,7 @@ def predict_endpoint():
         "heatmap_url": prediction_result.get("heatmap_url"),
         "is_demo": prediction_result.get("is_demo", False),
         "is_low_confidence": prediction_result.get("is_low_confidence", False),
+        "is_valid_leaf": prediction_result.get("is_valid_leaf", True),
         "recommendation": recommendation,
         "note": prediction_result.get("note", "")
     })

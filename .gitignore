@@ -49,6 +49,11 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 
+# Output Artifacts (binary/generated files)
+outputs/*.pdf
+outputs/*.png
+outputs/*.json
+
 # IDE Configs
 .vscode/
 .idea/
