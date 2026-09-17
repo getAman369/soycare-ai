@@ -16,6 +16,8 @@ MODELS_DIR = BASE_DIR / "models"
 MODEL_PATH = MODELS_DIR / "soybean_disease_model.keras"
 KNOWLEDGE_BASE_PATH = BASE_DIR / "knowledge_base" / "disease_recommendations.json"
 OUTPUTS_DIR = BASE_DIR / "outputs"
+SECRET_KEY = os.getenv("SOYCARE_SECRET_KEY")
+DEBUG = os.getenv("SOYCARE_DEBUG", "false").lower() == "true"
 
 # Ensure runtime directories exist
 for directory in (UPLOAD_DIR, HEATMAP_DIR, DATA_DIR, MODELS_DIR, OUTPUTS_DIR):

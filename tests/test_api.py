@@ -68,6 +68,14 @@ def test_history_and_pagination(client, sample_leaf_image):
     assert len(json_data["records"]) >= 2
 
 
+def test_history_rejects_invalid_pagination(client):
+    """Verifies malformed pagination input returns a client error."""
+    response = client.get("/api/history?page=not-a-number&limit=10")
+
+    assert response.status_code == 400
+    assert "page and limit" in response.get_json()["error"]
+
+
 def test_history_csv_export(client, sample_leaf_image):
     """Verifies that /api/history/export returns a valid CSV file stream."""
     with open(sample_leaf_image, "rb") as f:

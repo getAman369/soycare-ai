@@ -6,7 +6,6 @@ and ranks diagnosis confidence.
 """
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
-import random
 import logging
 import numpy as np
 from PIL import Image, ImageOps
@@ -159,36 +158,7 @@ class DiseasePredictor:
                 "note": note
             }
 
-        # Baseline heuristic fallback when model weights are not yet compiled
-        save_and_overlay_gradcam(image_path, None, heatmap_path)
-        selection = random.choice(CLASSES)
-        confidence = round(random.uniform(72.0, 91.5), 1)
-
-        # Distribute remaining probability realistically
-        remaining = 100.0 - confidence
-        other_classes = [c for c in CLASSES if c != selection]
-        random.shuffle(other_classes)
-        second_conf = round(remaining * 0.65, 1)
-        third_conf = round(remaining * 0.25, 1)
-
-        top_predictions = [
-            {"disease": selection, "confidence": confidence},
-            {"disease": other_classes[0], "confidence": second_conf},
-            {"disease": other_classes[1], "confidence": third_conf}
-        ]
-
-        if not is_valid_leaf:
-            note = f"⚠️ Image Notice: {val_reason}"
-        else:
-            note = "Prototype mode: Train model via src.train to enable live neural network weights."
-
-        return {
-            "disease": selection,
-            "confidence": confidence,
-            "top_predictions": top_predictions,
-            "heatmap_url": f"/uploads/heatmaps/{heatmap_filename}",
-            "is_demo": True,
-            "is_low_confidence": not is_valid_leaf,
-            "is_valid_leaf": is_valid_leaf,
-            "note": note
-        }
+        raise RuntimeError(
+            "The trained disease model is unavailable. Place the model at "
+            f"{self.model_path} before enabling diagnosis."
+        )

@@ -11,6 +11,28 @@ from PIL import Image, ImageDraw
 
 import config
 from app import app, initialise_database
+import app as app_module
+import src.predict as predict_module
+
+
+class FakePredictor:
+    """Deterministic predictor used by API tests instead of local model weights."""
+
+    def predict(self, image_path, filename=None):
+        return {
+            "disease": "Healthy",
+            "confidence": 96.0,
+            "top_predictions": [
+                {"disease": "Healthy", "confidence": 96.0},
+                {"disease": "Soybean rust", "confidence": 2.0},
+                {"disease": "Downy mildew", "confidence": 1.0}
+            ],
+            "heatmap_url": f"/uploads/heatmaps/heatmap_{filename or image_path.name}",
+            "is_demo": False,
+            "is_low_confidence": False,
+            "is_valid_leaf": True,
+            "note": "Test prediction."
+        }
 
 
 @pytest.fixture(scope="session")
@@ -33,6 +55,10 @@ def client(temp_test_dir, monkeypatch):
     monkeypatch.setattr(config, "DATABASE_PATH", test_db)
     monkeypatch.setattr(config, "UPLOAD_DIR", test_uploads)
     monkeypatch.setattr(config, "HEATMAP_DIR", test_heatmaps)
+    monkeypatch.setattr(app_module, "DATABASE_PATH", test_db)
+    monkeypatch.setattr(app_module, "UPLOAD_DIR", test_uploads)
+    monkeypatch.setattr(predict_module, "HEATMAP_DIR", test_heatmaps)
+    monkeypatch.setattr(app_module, "predictor", FakePredictor())
 
     initialise_database()
 

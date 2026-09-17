@@ -11,6 +11,7 @@ import sqlite3
 import csv
 import io
 import base64
+from PIL import Image, UnidentifiedImageError
 from flask import (
     Flask,
     jsonify,
@@ -28,6 +29,8 @@ from config import (
     DATABASE_PATH,
     KNOWLEDGE_BASE_PATH,
     OUTPUTS_DIR,
+    SECRET_KEY,
+    DEBUG,
     MAX_CONTENT_LENGTH,
     ALLOWED_EXTENSIONS,
     HIGH_RISK_CONFIDENCE_THRESHOLD,
@@ -38,7 +41,7 @@ from src.predict import DiseasePredictor
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
-app.config["SECRET_KEY"] = "soycare-prototype-secret-key-2026"
+app.config["SECRET_KEY"] = SECRET_KEY
 
 # Initialize single instance of DiseasePredictor
 predictor = DiseasePredictor()
@@ -79,6 +82,9 @@ def initialise_database():
     logger.info("Database initialized and migrated at %s", DATABASE_PATH)
 
 
+initialise_database()
+
+
 def load_knowledge_base():
     """Loads disease management guidance from JSON."""
     if not KNOWLEDGE_BASE_PATH.exists():
@@ -98,6 +104,22 @@ def recommendations_for(disease_name):
         "cultural_management": ["Maintain regular field inspection."],
         "loss_minimization": "Record observations."
     }))
+
+
+def remove_saved_upload(filename):
+    """Removes a newly uploaded file when processing cannot continue."""
+    if not filename:
+        return
+    try:
+        (UPLOAD_DIR / filename).unlink(missing_ok=True)
+    except OSError:
+        logger.warning("Could not remove failed upload %s", filename)
+
+
+def validate_saved_image(image_path):
+    """Confirms that uploaded bytes are a decodable image."""
+    with Image.open(image_path) as image:
+        image.verify()
 
 
 # --------------------------------------------------------------------------
@@ -163,12 +185,23 @@ def predict_endpoint():
     else:
         return jsonify({"error": "Please provide an image file or camera capture."}), 400
 
+    try:
+        validate_saved_image(target_path)
+    except (UnidentifiedImageError, OSError):
+        remove_saved_upload(saved_filename)
+        return jsonify({"error": "The uploaded file is not a valid image."}), 400
+
     # Perform ML Inference + Grad-CAM
     try:
         prediction_result = predictor.predict(target_path, filename=saved_filename)
-    except Exception as err:
+    except RuntimeError as err:
+        remove_saved_upload(saved_filename)
         logger.error("Inference failed: %s", err)
-        return jsonify({"error": f"Model inference failed: {str(err)}"}), 500
+        return jsonify({"error": str(err)}), 503
+    except Exception as err:
+        remove_saved_upload(saved_filename)
+        logger.exception("Unexpected inference failure")
+        return jsonify({"error": "Model inference failed. Please try again later."}), 500
 
     disease = prediction_result["disease"]
     confidence = prediction_result["confidence"]
@@ -217,8 +250,11 @@ def history_endpoint():
     Returns paginated scan history with search and filtering by risk level or disease.
     Query params: page, limit, disease, risk, search
     """
-    page = max(1, int(request.args.get("page", 1)))
-    limit = min(50, max(1, int(request.args.get("limit", 10))))
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        limit = min(50, max(1, int(request.args.get("limit", 10))))
+    except ValueError:
+        return jsonify({"error": "page and limit must be integers."}), 400
     offset = (page - 1) * limit
 
     disease_filter = request.args.get("disease", "").strip()
@@ -362,4 +398,4 @@ def internal_error(error):
 if __name__ == "__main__":
     initialise_database()
     logger.info("Starting SoyCare AI server on http://127.0.0.1:5000")
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=DEBUG)
