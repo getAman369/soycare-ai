@@ -48,6 +48,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+data/kaggle/*
+!data/kaggle/.gitkeep
 
 # Output Artifacts (binary/generated files)
 outputs/*.pdf

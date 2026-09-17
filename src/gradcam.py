@@ -40,31 +40,49 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name=None, pred_index
         logger.warning("Could not identify convolutional layer for Grad-CAM.")
         return None
 
+    target_layer = None
+    nested_model = None
     try:
-        # Build gradient model mapping input to last conv activations and final predictions
-        grad_model = tf.keras.models.Model(
-            inputs=[model.inputs],
-            outputs=[model.get_layer(last_conv_layer_name).output, model.output]
-        )
-    except Exception:
-        # Fallback if layer is nested inside a Sequential container
-        try:
-            target_layer = None
-            for layer in model.layers:
+        target_layer = model.get_layer(last_conv_layer_name)
+    except ValueError:
+        for layer in model.layers:
+            if isinstance(layer, tf.keras.Model):
                 try:
                     target_layer = layer.get_layer(last_conv_layer_name)
+                    nested_model = layer
                     break
-                except Exception:
+                except ValueError:
                     continue
-            if target_layer is None:
-                return None
+
+    if target_layer is None:
+        logger.error("Could not resolve Grad-CAM layer %s", last_conv_layer_name)
+        return None
+
+    try:
+        if nested_model is None:
             grad_model = tf.keras.models.Model(
-                inputs=[model.inputs],
+                inputs=model.inputs,
                 outputs=[target_layer.output, model.output]
             )
-        except Exception as err:
-            logger.error("Failed to construct Grad-CAM gradient model: %s", err)
-            return None
+        else:
+            nested_grad_model = tf.keras.models.Model(
+                inputs=nested_model.input,
+                outputs=[target_layer.output, nested_model.output]
+            )
+            nested_input = model.input
+            nested_activations = None
+            for layer in model.layers[1:]:
+                if layer is nested_model:
+                    nested_activations, nested_input = nested_grad_model(nested_input)
+                else:
+                    nested_input = layer(nested_input)
+            grad_model = tf.keras.models.Model(
+                inputs=model.inputs,
+                outputs=[nested_activations, nested_input]
+            )
+    except Exception as err:
+        logger.error("Failed to construct Grad-CAM gradient model: %s", err)
+        return None
 
     with tf.GradientTape() as tape:
         last_conv_layer_output, preds = grad_model(img_array)

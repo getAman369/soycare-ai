@@ -13,7 +13,7 @@ class FakeModel:
     """Minimal model double for testing prediction response formatting."""
 
     def predict(self, image_tensor, verbose=0):
-        return np.array([[0.02, 0.03, 0.04, 0.85, 0.03, 0.03]], dtype=np.float32)
+        return np.array([[0.04, 0.90, 0.06]], dtype=np.float32)
 
 
 def test_validate_leaf_image_valid(sample_leaf_image):
