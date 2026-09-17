@@ -116,6 +116,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Install Git LFS before cloning or pulling the trained model artifact:
+
+```bash
+brew install git-lfs
+git lfs install
+```
+
 The project is tested with Python 3.13. If `.venv` does not exist, create it
 with `/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13 -m venv .venv`.
 

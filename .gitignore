@@ -37,7 +37,6 @@ uploads/heatmaps/*
 !uploads/heatmaps/.gitkeep
 
 # Heavy Model Weights (>100MB)
-models/*.keras
 models/*.h5
 models/*.tflite
 models/*.savedmodel/
