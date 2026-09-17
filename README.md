@@ -112,6 +112,20 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+The project is tested with Python 3.13. If `.venv` does not exist, create it
+with `/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13 -m venv .venv`.
+
+For local development, enable debug explicitly only when needed:
+
+```bash
+export SOYCARE_DEBUG=true
+export SOYCARE_SECRET_KEY="use-a-local-random-value"
+```
+
+The application refuses to generate diagnoses when the trained model is
+missing. This is intentional: a demo or fallback prediction must never be
+confused with an agricultural diagnosis.
+
 ### 2. Launch Application
 ```bash
 python app.py
