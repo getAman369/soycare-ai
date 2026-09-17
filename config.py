@@ -29,13 +29,10 @@ BATCH_SIZE = 16
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
 
-# Soybean Disease Classification Classes (Alphabetical order matching training folder structure)
+# Real-data experiment classes (alphabetical order matching training folder structure)
 CLASSES = [
-    "Bacterial blight",
-    "Downy mildew",
     "Frogeye leaf spot",
     "Healthy",
-    "Septoria brown spot",
     "Soybean rust"
 ]
 

@@ -25,7 +25,7 @@ class FakePredictor:
             "top_predictions": [
                 {"disease": "Healthy", "confidence": 96.0},
                 {"disease": "Soybean rust", "confidence": 2.0},
-                {"disease": "Downy mildew", "confidence": 1.0}
+                {"disease": "Frogeye leaf spot", "confidence": 1.0}
             ],
             "heatmap_url": f"/uploads/heatmaps/heatmap_{filename or image_path.name}",
             "is_demo": False,

@@ -38,21 +38,25 @@ graph TD
 
 ---
 
-## Model Benchmark Performance
+## Current Model Experiment
 
-Trained using a two-stage transfer learning procedure on 224×224 normalized RGB images:
+The current development experiment uses real soybean leaf photos for three classes:
+`Frogeye leaf spot`, `Healthy`, and `Soybean rust`.
+
+The previous six-class benchmark was based on synthetic images and is not a
+valid measure of real-world performance. Evaluation is generated from the
+held-out real test split:
 
 | Disease Class | Precision | Recall | F1-Score | Support |
 | :--- | :---: | :---: | :---: | :---: |
-| **Bacterial blight** | 94.7% | 94.7% | 94.7% | 95 |
-| **Downy mildew** | 96.1% | 96.1% | 96.1% | 102 |
-| **Frogeye leaf spot** | 97.7% | 95.5% | 96.6% | 88 |
-| **Healthy** | 98.2% | 99.1% | 98.6% | 110 |
-| **Septoria brown spot** | 91.9% | 92.9% | 92.4% | 98 |
-| **Soybean rust** | 96.2% | 96.2% | 96.2% | 105 |
-| **Overall Macro Average** | **95.8%** | **95.8%** | **95.8%** | **598** |
+| **Frogeye leaf spot** | 100.0% | 80.0% | 88.9% | 20 |
+| **Healthy** | 100.0% | 85.0% | 91.9% | 20 |
+| **Soybean rust** | 74.1% | 100.0% | 85.1% | 20 |
+| **Overall Accuracy** | - | - | **88.3%** | **60** |
 
 *Evaluation confusion matrix and metrics report are generated in `outputs/confusion_matrix.png` and `outputs/evaluation_report.json`.*
+These results are an initial experiment on one Kaggle source and need external
+validation before deployment.
 
 ---
 
