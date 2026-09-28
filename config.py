@@ -30,11 +30,31 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
 
 # Real-data experiment classes (alphabetical order matching training folder structure)
+# These are the classes the currently shipped model was trained on.
 CLASSES = [
     "Frogeye leaf spot",
     "Healthy",
     "Soybean rust"
 ]
+
+# Phase 0 target taxonomy: the six classes the knowledge base documents.
+# CLASSES is promoted to this list only after a real dataset passes
+# `python -m scripts.audit_dataset` and the model is retrained, so inference
+# never indexes a class the loaded weights were not trained for.
+TARGET_CLASSES = [
+    "Bacterial blight",
+    "Downy mildew",
+    "Frogeye leaf spot",
+    "Healthy",
+    "Septoria brown spot",
+    "Soybean rust"
+]
+
+# Minimum verified real images per class before retraining is considered.
+MIN_IMAGES_PER_CLASS = 300
+
+# Source registry for real dataset acquisition. See DATASET_GUIDE.md.
+DATASET_SOURCES_PATH = DATA_DIR / "sources.json"
 
 # Risk assessment thresholds
 HIGH_RISK_CONFIDENCE_THRESHOLD = 80.0

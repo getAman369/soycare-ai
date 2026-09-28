@@ -82,8 +82,33 @@ class DiseasePredictor:
             except Exception as e:
                 logger.error("Error loading model: %s. Falling back to heuristic mode.", e)
                 self.model = None
+                return
+            # Run outside the try: a class-count mismatch must not degrade
+            # silently into demo mode, because every prediction would be mislabelled.
+            self._verify_class_alignment()
         else:
             logger.info("No saved model found at %s. Running in baseline/demo mode.", self.model_path)
+
+    def _verify_class_alignment(self) -> None:
+        """
+        Refuses to serve a model whose output layer does not match config.CLASSES.
+        Without this, a 6-class retrained model loaded while CLASSES still holds
+        3 entries would silently mislabel every prediction.
+        """
+        output_shape = getattr(self.model, "output_shape", None)
+        if isinstance(output_shape, list):
+            output_shape = output_shape[0]
+        if not output_shape:
+            return
+
+        model_classes = output_shape[-1]
+        if model_classes != len(CLASSES):
+            raise ValueError(
+                f"Model at {self.model_path} outputs {model_classes} classes but "
+                f"config.CLASSES defines {len(CLASSES)} ({CLASSES}). Retrain the model "
+                f"or update config.CLASSES so they match before serving predictions."
+            )
+        logger.info("Model class alignment verified: %d classes.", model_classes)
 
     def preprocess_image(self, image_path: Path) -> np.ndarray:
         """
@@ -114,7 +139,8 @@ class DiseasePredictor:
         val_reason = leaf_val.get("reason", "")
 
         if self.model is not None:
-            import tensorflow as tf
+            # TensorFlow was imported here but never used. Because the import sat
+            # on the request path it cost 1-3 s of module loading per prediction.
             img_tensor = self.preprocess_image(image_path)
             raw_predictions = self.model.predict(img_tensor, verbose=0)[0]
 
