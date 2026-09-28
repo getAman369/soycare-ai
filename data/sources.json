@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "description": "Vetted public soybean leaf image sources for Phase 0 data acquisition. Each source declares its license, how to fetch it, and how its native class labels map onto config.TARGET_CLASSES.",
+  "sources": [
+    {
+      "id": "asdid",
+      "name": "Auburn Soybean Disease Image Dataset (ASDID)",
+      "publisher": "Auburn University via Dryad / Zenodo mirror",
+      "doi": "10.5061/dryad.41ns1rnj3",
+      "mirror_doi": "10.5281/zenodo.7304859",
+      "license": "CC0-1.0",
+      "license_url": "https://spdx.org/licenses/CC0-1.0.html",
+      "citation": "Bevers N, Sikora EJ, Hardy NB. Pictures of diseased soybean leaves by category captured in field and with controlled backgrounds: Auburn soybean disease image dataset (ASDID). Dryad; 2022. https://doi.org/10.5061/dryad.41ns1rnj3",
+      "capture": {
+        "region": "Alabama, USA",
+        "seasons": ["2020", "2021"],
+        "sites": [
+          "EV Smith Agricultural Research Station (Tallassee, AL)",
+          "Cullars Rotation (Auburn, AL)",
+          "Brewton Agricultural Research Unit (Brewton, AL)"
+        ],
+        "devices": ["Canon EOS 7D Mark II DSLR", "Motorola Moto Z2 Play smartphone"],
+        "conditions": "attached at varying canopy heights in field, or detached and laid on trimmed grass or a white surface"
+      },
+      "notes": "Largest field-conditions soybean disease corpus that is public domain. Filenames are flat per-class with no capture-session metadata, so session grouping falls back to perceptual-hash clustering in the audit step.",
+      "access": {
+        "type": "range_request_zip",
+        "supports_http_range": true,
+        "listing_url": "https://zenodo.org/api/records/7304859",
+        "file_url_template": "https://zenodo.org/api/records/7304859/files/{file}/content"
+      },
+      "classes": {
+        "bacterial_blight": {
+          "target_class": "Bacterial blight",
+          "archive": "bacterial_blight.zip",
+          "declared_count": 484,
+          "md5": "31cd576c7b4681eb77942b7fbae59308"
+        },
+        "downey_mildew": {
+          "target_class": "Downy mildew",
+          "archive": "downey_mildew.zip",
+          "declared_count": 652,
+          "md5": "c13cbb0771be3edc25d4f1a144bb7f5f"
+        },
+        "frogeye": {
+          "target_class": "Frogeye leaf spot",
+          "archive": "frogeye.zip",
+          "declared_count": 1540,
+          "md5": "4dd9b491bdb90f471c0358f4843dee79"
+        },
+        "healthy": {
+          "target_class": "Healthy",
+          "archive": "healthy.zip",
+          "declared_count": 1632,
+          "md5": "0c3e217c230bbcb4f011d9586a40061f"
+        },
+        "soybean_rust": {
+          "target_class": "Soybean rust",
+          "archive": "soybean_rust.zip",
+          "declared_count": 1627,
+          "md5": "7eb6e827efe25deeeabe0a33d1d069a9"
+        }
+      },
+      "unused_archives": {
+        "unused_healthy.zip": {"target_class": "Healthy", "declared_count": 118},
+        "unused_soybean_rust.zip": {"target_class": "Soybean rust", "declared_count": 155},
+        "unused_cercospora_leaf_blight.zip": {
+          "target_class": null,
+          "declared_count": 114,
+          "reason_excluded": "Cercospora leaf blight is not one of the six target classes."
+        }
+      }
+    },
+    {
+      "id": "india_soyabean_leaf",
+      "name": "An India soyabean leaf dataset",
+      "publisher": "Mendeley Data",
+      "doi": "10.17632/bshkvgbzpt.1",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "citation": "Kotwal J, Kashyap R. An India soyabean leaf dataset. Mendeley Data; 2023. https://doi.org/10.17632/bshkvgbzpt.1",
+      "capture": {
+        "region": "Maharashtra, India",
+        "seasons": ["2023"],
+        "sites": ["farms in Pune, Satara, Ahmednagar, Solapur, Nashik"],
+        "devices": ["handheld camera"],
+        "conditions": "field photographs across fewer than three seasons on several farms"
+      },
+      "notes": "Primary source for Septoria brown spot, which ASDID does not cover. Native class folders are exposed only through the Mendeley public API, whose folder listing is not name-addressable; the fetch script requires an explicit folder-id to class mapping file supplied by the operator (see scripts/fetch_datasets.py --folder-map).",
+      "access": {
+        "type": "rest_file_list",
+        "supports_http_range": false,
+        "listing_url": "https://data.mendeley.com/public-api/datasets/bshkvgbzpt",
+        "file_url_template": "https://data.mendeley.com/public-files/datasets/bshkvgbzpt/files/{file_id}/file_downloaded"
+      },
+      "classes": {
+        "Septoria brown spot": {"target_class": "Septoria brown spot", "declared_count": null},
+        "Bacterial leaf blight": {"target_class": "Bacterial blight", "declared_count": null},
+        "Healthy plants": {"target_class": "Healthy", "declared_count": null}
+      }
+    },
+    {
+      "id": "agml_india_soyabean",
+      "name": "Soybean Leaf Disease Classification (Project-AgML mirror)",
+      "publisher": "Project-AgML on Hugging Face",
+      "doi": "10.17632/bshkvgbzpt.1",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "citation": "Kotwal J, Kashyap R, Pathan MS. An India soyabean dataset for identification and classification of diseases using computer-vision algorithms. Data in Brief 2024;53:110216. https://doi.org/10.1016/j.dib.2024.110216",
+      "capture": {
+        "region": "Maharashtra, India",
+        "seasons": ["2023"],
+        "sites": ["several farms, Maharashtra"],
+        "devices": ["handheld camera"],
+        "conditions": "field photographs"
+      },
+      "notes": "Labelled parquet mirror of the Mendeley India dataset, 1,176 images. Preferred over the raw Mendeley files because class labels are already resolved: Bacterial leaf Blight (226) and Septoria_Brown_Spot (284) are both target classes, while Dry_leaf, Root_images and Vein Necrosis are not. Hub download is ~2.8 GB for 1,176 images because the source JPEGs are full resolution.",
+      "access": {
+        "type": "hf_parquet",
+        "supports_http_range": true,
+        "listing_url": "https://huggingface.co/api/datasets/Project-AgML/soybean_leaf_disease_classification",
+        "file_url_template": "https://huggingface.co/datasets/Project-AgML/soybean_leaf_disease_classification/resolve/main/{file}"
+      },
+      "classes": {
+        "Bacterial leaf Blight": {"target_class": "Bacterial blight", "declared_count": 226},
+        "Septoria_Brown_Spot": {"target_class": "Septoria brown spot", "declared_count": 284},
+        "Healthy": {"target_class": "Healthy", "declared_count": 288}
+      },
+      "excluded_classes": ["Dry_leaf", "Root_images", "Vein Necrosis"]
+    }
+  ],
+  "rejected_sources": [
+    {
+      "name": "SoyNet (Mendeley 10.17632/w2r855hpx8)",
+      "license": "CC-BY-4.0",
+      "reason": "Two classes only (Healthy vs Disease pooled). Cannot supply per-disease labels for a six-class model."
+    },
+    {
+      "name": "Soybean stress dataset (Ghosal et al. 2018, 16,573 images)",
+      "license": "not clearly licensed for redistribution",
+      "reason": "Label set is bacterial blight, Septoria brown spot, frogeye leaf spot, healthy, herbicide injury, iron deficiency chlorosis, potassium deficiency, bacterial pustule, sudden death syndrome. No soybean rust and no downy mildew, and images are indoor controlled-condition captures, so it cannot cover the full taxonomy. Reconsider as a supplementary source if field conditions become a requirement rather than a preference."
+    },
+    {
+      "name": "Kaggle soybean leaf datasets (e.g. vaishaligbhujade/soybean-leaf-dataset-for-disease-classification)",
+      "license": "varies per uploader, unverified",
+      "reason": "Class taxonomy and licensing are not documented well enough to record a defensible source entry, and Kaggle API credentials are not configured in this environment."
+    }
+  ],
+  "coverage": {
+    "note": "Expected per-class coverage after acquisition, against config.MIN_IMAGES_PER_CLASS.",
+    "classes": {
+      "Bacterial blight": {"sources": ["asdid", "agml_india_soyabean"], "expected_min": 484},
+      "Downy mildew": {"sources": ["asdid"], "expected_min": 652},
+      "Frogeye leaf spot": {"sources": ["asdid"], "expected_min": 1540},
+      "Healthy": {"sources": ["asdid", "agml_india_soyabean"], "expected_min": 1632},
+      "Septoria brown spot": {"sources": ["agml_india_soyabean"], "expected_min": 284, "meets_minimum": false},
+      "Soybean rust": {"sources": ["asdid"], "expected_min": 1627}
+    },
+    "known_gaps": [
+      "Septoria brown spot has only 284 images from a single Indian source, below the 300 minimum and with no field-conditions US source. This is the single blocking gap for the six-class retrain and needs field collection or a second source."
+    ]
+  }
+}

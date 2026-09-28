@@ -49,6 +49,7 @@ data/processed/*
 !data/processed/.gitkeep
 data/kaggle/*
 !data/kaggle/.gitkeep
+data/download_cache/*
 
 # Output Artifacts (binary/generated files)
 outputs/*.pdf

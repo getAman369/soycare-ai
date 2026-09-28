@@ -1,82 +1,107 @@
 """
 Dataset Preparation & Split Utility
-Prepares image folders into train/validation/test splits (80/10/10)
-and provides a synthetic sample generator to test the training pipeline immediately.
+Organises real image folders into train/validation/test splits and provides a
+synthetic sample generator to test the training pipeline immediately.
+
+Splits are assigned per capture-session group rather than per image, so frames
+photographed of the same plant cannot land in different splits and inflate the
+measured accuracy.
 """
 from pathlib import Path
 import random
 import shutil
 import argparse
-from PIL import Image, ImageDraw, ImageFilter
 import logging
+from PIL import Image, ImageDraw, ImageFilter
 
 from config import DATA_DIR, CLASSES, IMAGE_SIZE
+from src.dataset_groups import assign_groups_to_splits, group_paths
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("soycare.dataset")
 
+DEFAULT_SEED = 20240501
 
-def setup_folder_structure():
+
+def setup_folder_structure(classes=None):
     """Creates the class directories for train, validation, and test splits."""
+    classes = classes or CLASSES
     processed_dir = DATA_DIR / "processed"
     for split in ["train", "validation", "test"]:
-        for class_name in CLASSES:
+        for class_name in classes:
             folder = processed_dir / split / class_name
             folder.mkdir(parents=True, exist_ok=True)
-    logger.info("Created folder structure in %s for all %d classes.", processed_dir, len(CLASSES))
+    logger.info("Created folder structure in %s for all %d classes.", processed_dir, len(classes))
 
 
-def split_raw_dataset(raw_dir=None, train_ratio=0.8, val_ratio=0.1, test_ratio=0.1):
+def split_raw_dataset(
+    raw_dir=None,
+    train_ratio=0.8,
+    val_ratio=0.1,
+    test_ratio=0.1,
+    seed=DEFAULT_SEED,
+    classes=None,
+):
     """
-    Takes organized folders from data/raw/<class_name>/*.jpg
-    and splits them into data/processed/train, validation, and test.
+    Takes organised folders from data/raw/<class_name>/*.jpg and copies them into
+    data/processed/{train,validation,test}/<class_name>.
+
+    Images are clustered into capture-session groups by perceptual hash and whole
+    groups are assigned to a split, which keeps near-duplicate frames of the same
+    leaf on one side of the split boundary.
+
+    `classes` defaults to config.CLASSES, the taxonomy the deployed model was
+    trained on. Pass config.TARGET_CLASSES explicitly to stage the six-class
+    corpus before the retrain promotes TARGET_CLASSES to CLASSES.
     """
     if raw_dir is None:
         raw_dir = DATA_DIR / "raw"
 
+    classes = classes or CLASSES
     raw_dir = Path(raw_dir)
     processed_dir = DATA_DIR / "processed"
 
     if not raw_dir.exists():
         logger.error("Raw directory %s does not exist.", raw_dir)
-        return
+        return None
 
-    setup_folder_structure()
+    setup_folder_structure(classes)
 
     valid_extensions = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
+    ratios = {"train": train_ratio, "validation": val_ratio, "test": test_ratio}
     total_moved = 0
+    summary = {}
 
-    for class_name in CLASSES:
+    for class_name in classes:
         class_raw = raw_dir / class_name
         if not class_raw.exists():
             continue
 
         images = [f for f in class_raw.iterdir() if f.suffix.lower() in valid_extensions]
-        random.shuffle(images)
-
-        num_total = len(images)
-        if num_total == 0:
+        if not images:
             continue
 
-        num_train = int(num_total * train_ratio)
-        num_val = int(num_total * val_ratio)
+        groups = group_paths(images)
+        assignment = assign_groups_to_splits(groups, ratios, seed=seed)
 
-        splits = {
-            "train": images[:num_train],
-            "validation": images[num_train:num_train + num_val],
-            "test": images[num_train + num_val:]
-        }
+        per_split = {split: [] for split in ratios}
+        for group_id, split in assignment.items():
+            per_split[split].extend(groups[group_id])
 
-        for split_name, split_files in splits.items():
+        for split_name, files in per_split.items():
             dest_dir = processed_dir / split_name / class_name
-            for file_path in split_files:
+            for file_path in files:
                 shutil.copy2(file_path, dest_dir / file_path.name)
-                total_moved += 1
 
-        logger.info("Class '%s': Split %d images (train: %d, val: %d, test: %d)",
-                    class_name, num_total, len(splits["train"]), len(splits["validation"]), len(splits["test"]))
+        summary[class_name] = {split: len(files) for split, files in per_split.items()}
+        total_moved += len(images)
+        logger.info(
+            "Class '%s': %d images in %d groups -> %s",
+            class_name, len(images), len(groups),
+            ", ".join(f"{split}={len(files)}" for split, files in per_split.items()),
+        )
 
-    logger.info("Completed dataset splitting! Total images organized: %d", total_moved)
+    logger.info("Completed dataset splitting! Total images organised: %d", total_moved)
+    return summary
 
 
 def generate_sample_dataset(samples_per_class=30):
@@ -153,12 +178,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SoyCare AI Dataset Preparation")
     parser.add_argument("--generate-samples", action="store_true", help="Generate synthetic samples to test training immediately")
     parser.add_argument("--raw-dir", type=str, default=None, help="Path to raw dataset directory with class folders")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Seed for the reproducible group split")
+    parser.add_argument(
+        "--classes",
+        type=str,
+        default=None,
+        help="Comma-separated class names to split. Defaults to config.CLASSES; "
+             "use config.TARGET_CLASSES to stage the six-class corpus.",
+    )
     args = parser.parse_args()
+
+    classes = [c.strip() for c in args.classes.split(",")] if args.classes else None
 
     if args.generate_samples:
         generate_sample_dataset()
     elif args.raw_dir:
-        split_raw_dataset(args.raw_dir)
+        split_raw_dataset(args.raw_dir, seed=args.seed, classes=classes)
     else:
         setup_folder_structure()
         print("Folder structure initialized. Use --generate-samples to create sample data or --raw-dir to split raw images.")
